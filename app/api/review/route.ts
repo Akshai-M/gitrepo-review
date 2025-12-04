@@ -32,15 +32,29 @@ export async function POST(req: NextRequest) {
     .map((c: { file_path: string; content: string }) => `// FILE: ${c.file_path}\n${c.content}`)
     .join("\n\n");
 
+  // const resp = await client.chat({
+  //   model: "mistral-large-latest",
+  //   messages: [
+  //     {
+  //       role: "user",
+  //       content: `Prompt:${prompt} Relevant Code: ${context}, Return only raw, valid markdown with no code fences and no extra formatting.`,
+  //     },
+  //   ],
+  // });
+
+  
   const resp = await client.chat({
-    model: "mistral-large-latest",
-    messages: [
-      {
-        role: "user",
-        content: `Prompt:${prompt} Relevant Code: ${context}`,
-      },
-    ],
-  });
+  model: "mistral-large-latest",
+  messages: [
+        {
+      role: "user",
+      content: `Prompt:${prompt} 
+Relevant Code: ${context}
+strictly the output response should be only in structured markdown format.`
+    }
+  ]
+});
+
   console.log(resp)
   return NextResponse.json({
     answer: resp.choices[0].message.content,
