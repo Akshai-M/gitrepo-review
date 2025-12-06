@@ -22,13 +22,16 @@ export function AddRepo({ onRepoAdded }: { onRepoAdded: () => void }) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ git_url: gitUrl.trim() }),
         });
-        
-        if (res.ok) {
-            setGitUrl("");
-            if (onRepoAdded) onRepoAdded();
-        } else {
-            console.error("Failed to add repository.");
-        }
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        setGitUrl("");
+        if (onRepoAdded) onRepoAdded();
+      } else {
+        console.error("Failed to add repository.", data);
+        // Provide a small user-facing alert so the user knows what happened
+        alert(data?.error || "Failed to add repository.");
+      }
 
     } catch (error) {
         console.error("API call error:", error);
