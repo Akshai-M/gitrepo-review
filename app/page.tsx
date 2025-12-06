@@ -1,45 +1,3 @@
-// "use client";
-
-// import { useState, useEffect } from "react";
-// import { Sidebar } from "./Sidebar";
-// import { ChatWindow } from "./ChatWindow";
-
-// export default function ReposPage() {
-//   const [repos, setRepos] = useState([]);
-//   const [selectedRepo, setSelectedRepo] = useState(null);
-
-//   async function loadRepos() {
-//     const res = await fetch("/api/list-repos");
-//     const data = await res.json();
-//     setRepos(data.repos || []);
-//   }
-
-//   useEffect(() => {
-//     loadRepos();
-//   }, []);
-
-//   return (
-//     <div className="flex">
-//       <Sidebar
-//         repos={repos}
-//         selectedRepoId={selectedRepo}
-//         onSelectRepo={setSelectedRepo}
-//         reloadRepos={loadRepos}
-//       />
-
-//       <div className="flex-1">
-//         {selectedRepo ? (
-//           <ChatWindow repoId={selectedRepo} />
-//         ) : (
-//           <div className="p-6 text-gray-500">
-//             Add a repo to start reviewing.
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -51,9 +9,9 @@ export default function ReposPage() {
   const [selectedRepoId, setSelectedRepoId] = useState<string>("");
   const [loadingRepos, setLoadingRepos] = useState(true);
 
-  const repoName = selectedRepoId
-    ? repos.find((r) => String(r.id) === selectedRepoId)?.name
-    : null;
+  const repoName: string = selectedRepoId
+    ? repos.find((r) => String(r.id) === selectedRepoId)?.name ?? ""
+    : "";
 
   async function loadRepos() {
     setLoadingRepos(true);
