@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import MarkdownRenderer from "@/app/components/MarkdownRenderer";
 
 const TypingIndicator = () => (
   <div className="flex justify-start">
@@ -13,7 +14,13 @@ const TypingIndicator = () => (
   </div>
 );
 
-function ChatInput({ onSend, disabled }:{ onSend: (msg: string) => void; disabled: boolean }) {
+function ChatInput({
+  onSend,
+  disabled,
+}: {
+  onSend: (msg: string) => void;
+  disabled: boolean;
+}) {
   const [value, setValue] = useState("");
 
   function handleSend() {
@@ -47,14 +54,22 @@ function ChatInput({ onSend, disabled }:{ onSend: (msg: string) => void; disable
   );
 }
 
-export function ChatWindow({ repoId, repoName }:{ repoId: string; repoName: string}) {
-  const [messages, setMessages] = useState<{ role: string; text: string }[]>([]);
+export function ChatWindow({
+  repoId,
+  repoName,
+}: {
+  repoId: string;
+  repoName: string;
+}) {
+  const [messages, setMessages] = useState<{ role: string; text: string }[]>(
+    []
+  );
   const [isAssistantTyping, setIsAssistantTyping] = useState(false);
 
   useEffect(() => {
     const storageKey = `chat_messages_${repoId}`;
     const stored = localStorage.getItem(storageKey);
-    
+
     if (stored) {
       try {
         setMessages(JSON.parse(stored));
@@ -114,14 +129,13 @@ export function ChatWindow({ repoId, repoName }:{ repoId: string; repoName: stri
       setIsAssistantTyping(false);
     }
   }
-
+  console.log(messages);
   return (
     <div className="flex flex-col h-screen w-full bg-gray-50">
-
       {/* Header */}
       <div className="p-4 border-b border-gray-200 bg-white shadow-md">
         <h2 className="text-xl font-bold text-gray-800 truncate">
-          Chat with: <span className="text-indigo-600">{repoName}</span> repo
+          Chat with: <span className="text-indigo-600">{repoName}</span>
         </h2>
       </div>
 
@@ -135,16 +149,23 @@ export function ChatWindow({ repoId, repoName }:{ repoId: string; repoName: stri
             }`}
           >
             <div
-              className={`p-4 rounded-xl shadow-md whitespace-pre-wrap ${
+              className={`p-4  min-w-xl whitespace-pre-wrap ${
                 msg.role === "user"
-                  ? "bg-indigo-600 text-white rounded-br-sm"
-                  : "bg-white text-gray-800 rounded-tl-sm border border-gray-200 w-full"
+                  ? "bg-indigo-600 w-fit text-white rounded-br-sm rounded-xl shadow-md"
+                  : " text-gray-800 w-6xl rounded-tl-sm border-gray-200"
               }`}
             >
-              <div className="text-sm">{msg.text}</div>
+              {/* AI → Render Markdown */}
+              {msg.role === "assistant" && <MarkdownRenderer text={msg.text} />}
+
+              {/* USER → Show plain text only */}
+              {msg.role === "user" && (
+                <div className="text-sm whitespace-pre-wrap">{msg.text}</div>
+              )}
             </div>
           </div>
         ))}
+
         {isAssistantTyping && <TypingIndicator />}
       </div>
 
