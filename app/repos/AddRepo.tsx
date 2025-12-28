@@ -22,7 +22,7 @@ export function AddRepo({ onRepoAdded }: { onRepoAdded: () => void }) {
 
       if (res.ok) {
         setGitUrl("");
-        if (onRepoAdded) onRepoAdded(); // Ensure this triggers the correct update
+        if (onRepoAdded) onRepoAdded();
       } else {
         console.error("Failed to add repository.", data);
         alert(data?.error || "Failed to add repository.");
