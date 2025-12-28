@@ -117,6 +117,9 @@ export function ChatWindow({
         text: data.answer || "Sorry, I couldn't get a response.",
       };
 
+      console.log(assistantMsg.text)
+      console.log(data.answer)
+
       setMessages((prev) => [...prev, assistantMsg]);
     } catch (error) {
       console.error("Error sending message:", error);
@@ -129,49 +132,53 @@ export function ChatWindow({
       setIsAssistantTyping(false);
     }
   }
-  console.log(messages);
+
   return (
-    <div className="flex flex-col h-screen w-full bg-gray-50">
-      {/* Header */}
-      <div className="p-4 border-b border-gray-200 bg-white shadow-md">
-        <h2 className="text-xl font-bold text-gray-800 truncate">
-          Chat with: <span className="text-indigo-600">{repoName}</span>
-        </h2>
-      </div>
+    <div className="flex flex-col h-screen bg-gray-50 items-center">
+      <div className="w-full max-w-full flex flex-col h-full">
+        {/* Header */}
+        <div className="p-4 border-b border-gray-200 bg-white shadow-md">
+          <h2 className="text-xl font-bold text-gray-800 truncate">
+            Chat with: <span className="text-indigo-600">{repoName}</span>
+          </h2>
+        </div>
 
-      {/* Chat */}
-      <div id="chat-container" className="flex-1 overflow-y-auto p-6 space-y-6">
-        {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={`flex ${
-              msg.role === "user" ? "justify-end" : "justify-start"
-            }`}
-          >
-            <div
-              className={`p-4  min-w-xl whitespace-pre-wrap ${
-                msg.role === "user"
-                  ? "bg-indigo-600 w-fit text-white rounded-br-sm rounded-xl shadow-md"
-                  : " text-gray-800 w-6xl rounded-tl-sm border-gray-200"
-              }`}
-            >
-              {/* AI → Render Markdown */}
-              {msg.role === "assistant" && <MarkdownRenderer text={msg.text} />}
+        <div className="flex-1 overflow-y-auto w-full">
+          <div id="chat-container" className="max-w-5xl mx-auto p-6 space-y-6">
+           
+            {messages.map((msg, i) => (
+              <div
+                key={i}
+                className={`flex ${
+                  msg.role === "user" ? "justify-end" : "justify-start"
+                }`}
+              >
+                <div
+                  className={`p-4 whitespace-pre-wrap max-w-full ${
+                    msg.role === "user"
+                      ? "bg-indigo-600 text-white rounded-br-sm rounded-xl shadow-md"
+                      : "text-gray-800 rounded-tl-sm rounded-xl"
+                  }`}
+                >
+                  {msg.role === "assistant" ? (
+                    <MarkdownRenderer text={msg.text} />
+                  ) : (
+                    <div className="text-sm whitespace-pre-wrap">
+                      {msg.text}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
 
-              {/* USER → Show plain text only */}
-              {msg.role === "user" && (
-                <div className="text-sm whitespace-pre-wrap">{msg.text}</div>
-              )}
-            </div>
+            {isAssistantTyping && <TypingIndicator />}
           </div>
-        ))}
+        </div>
 
-        {isAssistantTyping && <TypingIndicator />}
-      </div>
-
-      {/* Input */}
-      <div className="p-4 border-t border-gray-200 bg-white shadow-inner">
-        <ChatInput onSend={sendMessage} disabled={isAssistantTyping} />
+        {/* Chat Input */}
+        <div className="p-4 border-t border-gray-200 bg-white shadow-inner">
+          <ChatInput onSend={sendMessage} disabled={isAssistantTyping} />
+        </div>
       </div>
     </div>
   );
